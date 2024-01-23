@@ -10,8 +10,6 @@ import com.amazonaws.services.textract.AmazonTextract;
 import com.amazonaws.services.textract.AmazonTextractClientBuilder;
 import com.amazonaws.services.textract.model.*;
 import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.rendering.PDFRenderer;
-import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,18 +26,15 @@ public class DemoPdfFromS3Pdf {
         //Get input pdf document from Amazon S3
         InputStream inputPdf = getPdfFromS3(bucketName, documentName);
 
+
+        PDDocument inputDocument = PDDocument.load(inputPdf);
+
         //Create new PDF document
-        PDFDocument pdfDocument = new PDFDocument();
+        PDFDocument pdfDocument = new PDFDocument(inputDocument);
 
         //For each page add text layer and image in the pdf document
-        PDDocument inputDocument = PDDocument.load(inputPdf);
-        PDFRenderer pdfRenderer = new PDFRenderer(inputDocument);
-        BufferedImage image = null;
         for (int page = 0; page < inputDocument.getNumberOfPages(); ++page) {
-            image = pdfRenderer.renderImageWithDPI(page, 300, org.apache.pdfbox.rendering.ImageType.RGB);
-
-            pdfDocument.addPage(image, ImageType.JPEG, linesInPages.get(page));
-
+            pdfDocument.addText(page, linesInPages.get(page));
             System.out.println("Processed page index: " + page);
         }
 

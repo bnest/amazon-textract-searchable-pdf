@@ -24,6 +24,10 @@ public class PDFDocument {
         this.document = new PDDocument();
     }
 
+    public PDFDocument(PDDocument orignalDocument){
+        this.document = orignalDocument;
+    }
+
     public PDFDocument(InputStream inputDocument) throws IOException {
         this.document = PDDocument.load(inputDocument);
     }
